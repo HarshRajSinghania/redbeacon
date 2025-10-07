@@ -1,4 +1,4 @@
-# Simple Device Manager (FastAPI + SQLite + Python Agent)
+# RedBeacon C2 (FastAPI + SQLite + Python Agent)
 
 A minimal, easy-to-understand endpoint management demo:
 - Single FastAPI server with SQLite (no Docker, no brokers).
@@ -38,6 +38,36 @@ pip install -r agent/requirements.txt
 # Option B: run as module
 python -m agent.agent
 ```
+
+## Exec prototype (optional)
+
+This prototype lets the agent run commands remotely via a new task type `exec`.
+
+- Disabled controls: no allowlist yet (you will add it later). Use only in a trusted lab.
+- Safety in place: no shell execution, default timeout 10s, output capped to 16KB.
+
+Example task payloads (create via Swagger `POST /tasks`, header `X-Admin-Token: changeme-admin`):
+
+- Windows PowerShell (use `cmd /c`):
+```
+{
+  "target_agent_id": "agent-001",
+  "type": "exec",
+  "payload": { "cmd": "cmd", "args": ["/c", "echo", "hello"] }
+}
+```
+
+- Linux/macOS:
+```
+{
+  "target_agent_id": "agent-001",
+  "type": "exec",
+  "payload": { "cmd": "echo", "args": ["hello"] }
+}
+```
+
+Result will include: `returncode`, `stdout`, `stderr`, `duration_ms`, and truncation flags.
+
 
 ### Create a task (from Swagger or curl)
 - Open http://127.0.0.1:8000/docs

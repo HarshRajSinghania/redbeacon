@@ -1,8 +1,8 @@
 {
   "server_url": "http://127.0.0.1:8000",
   "agent_id": "agent-001",
-  "hostname": "",
-  "os": "",
+  "hostname": "Harsh",
+  "os": "Windows 10",
   "version": "0.1.0",
-  "token": ""
+  "token": "4568045a21bd3894f52fc1ba3bd83d04"
 }

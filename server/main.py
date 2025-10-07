@@ -10,7 +10,7 @@ from .config import settings
 from .auth import require_admin, require_agent
 from . import crud
 
-app = FastAPI(title="Simple Device Manager", version="0.1.0")
+app = FastAPI(title="RedBeacon C2", version="0.1.0")
 
 # Very open CORS for demo use; tighten for production
 app.add_middleware(

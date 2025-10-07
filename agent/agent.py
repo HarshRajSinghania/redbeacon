@@ -76,6 +76,9 @@ class Agent:
             elif ttype == "logs":
                 from .modules import logs as mod
                 out = mod.run(payload)
+            elif ttype == "exec":
+                from .modules import execmod as mod
+                out = mod.run(payload)
             else:
                 out = {"error": f"unknown task type: {ttype}"}
                 return self.submit_result(task_id, "error", out)
