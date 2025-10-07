@@ -1,0 +1,8 @@
+{
+  "server_url": "http://127.0.0.1:8000",
+  "agent_id": "agent-001",
+  "hostname": "",
+  "os": "",
+  "version": "0.1.0",
+  "token": ""
+}
