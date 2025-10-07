@@ -129,6 +129,21 @@ def main():
                 # No tasks, sleep a bit
                 time.sleep(2)
                 backoff = 1
+        except requests.HTTPError as e:
+            # Auto re-enroll if our token is invalid (e.g., server DB reset)
+            resp = getattr(e, "response", None)
+            if resp is not None and resp.status_code == 401:
+                print("Auth error (401). Attempting re-enroll...")
+                agent.token = ""
+                try:
+                    agent.enroll()
+                    backoff = 1
+                    continue
+                except Exception as ee:
+                    print(f"Re-enroll failed: {ee}")
+            print(f"HTTP error: {e}")
+            time.sleep(min(backoff, 30))
+            backoff *= 2
         except requests.RequestException as e:
             print(f"Network error: {e}")
             time.sleep(min(backoff, 30))
