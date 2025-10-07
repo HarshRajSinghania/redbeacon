@@ -68,6 +68,41 @@ Example task payloads (create via Swagger `POST /tasks`, header `X-Admin-Token: 
 
 Result will include: `returncode`, `stdout`, `stderr`, `duration_ms`, and truncation flags.
 
+## TLS + certificate pinning (optional)
+
+You can run the server over HTTPS and have the agent verify a specific certificate (pinning).
+
+1) Generate a self-signed certificate (PowerShell example):
+```
+openssl req -x509 -newkey rsa:2048 -nodes -keyout server.key -out server.crt -days 365 -subj "/CN=127.0.0.1"
+```
+
+2) Run the server with TLS:
+```
+uvicorn server.main:app --host 127.0.0.1 --port 8443 --ssl-keyfile server.key --ssl-certfile server.crt
+```
+
+3) Compute the SHA256 pin of the certificate:
+```
+openssl x509 -in server.crt -noout -fingerprint -sha256
+# Or in pure DER digest:
+openssl x509 -in server.crt -outform der | openssl dgst -sha256
+```
+Use the hex digest (without spaces/colons) as `pin_sha256`.
+
+4) Configure the agent `agent/config.json`:
+```
+{
+  "server_url": "https://127.0.0.1:8443",
+  "agent_id": "agent-001",
+  ...,
+  "ca_cert_path": "C:/path/to/server.crt",  // use full path
+  "pin_sha256": "<hex_sha256_of_cert_der>"
+}
+```
+
+5) Run the agent. It will verify the certificate using the CA file and enforce the SHA256 pin.
+
 
 ### Create a task (from Swagger or curl)
 - Open http://127.0.0.1:8000/docs

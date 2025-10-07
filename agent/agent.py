@@ -3,8 +3,9 @@ import time
 import uuid
 import socket
 import platform
+import hashlib
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 import requests
 
@@ -20,6 +21,10 @@ class Agent:
         self.os = cfg.get("os") or f"{platform.system()} {platform.release()}"
         self.version = cfg.get("version", "0.1.0")
         self.token = cfg.get("token", "")
+        # TLS settings
+        self.ca_cert_path: Optional[str] = cfg.get("ca_cert_path") or None
+        # pin_sha256 should be hex string of SHA256 over server cert in DER form
+        self.pin_sha256: Optional[str] = (cfg.get("pin_sha256") or "").lower() or None
 
     def save_config(self):
         data = {
@@ -29,37 +34,56 @@ class Agent:
             "os": self.os,
             "version": self.version,
             "token": self.token,
+            "ca_cert_path": self.ca_cert_path or "",
+            "pin_sha256": self.pin_sha256 or "",
         }
         CONFIG_PATH.write_text(json.dumps(data, indent=2))
 
+    def _request(self, method: str, path: str, headers: Dict[str, str] | None = None, payload: Dict[str, Any] | None = None, timeout: float = 20.0):
+        url = f"{self.server_url}{path}"
+        verify = self.ca_cert_path if self.ca_cert_path else True
+        hdrs = headers.copy() if headers else {}
+        with requests.Session() as s:
+            resp = s.request(method=method.upper(), url=url, json=payload or {}, headers=hdrs, timeout=timeout, verify=verify, stream=True)
+            # Raise for HTTP error first
+            resp.raise_for_status()
+            # Certificate pinning check (optional)
+            if self.pin_sha256:
+                try:
+                    # Get server cert in DER (binary) form from underlying socket
+                    # urllib3 exposes the raw socket via resp.raw.connection.sock
+                    der_bytes = resp.raw.connection.sock.getpeercert(binary_form=True)
+                    digest = hashlib.sha256(der_bytes).hexdigest()
+                    if digest.lower() != self.pin_sha256.lower():
+                        raise requests.HTTPError(f"Certificate pin mismatch (got {digest}, expected {self.pin_sha256})", response=resp)
+                except AttributeError:
+                    # If we cannot access the socket, fail closed when pinning is configured
+                    raise requests.HTTPError("Unable to access peer certificate for pinning", response=resp)
+            # Now consume body
+            return resp
+
     def enroll(self):
-        url = f"{self.server_url}/enroll"
         payload = {
             "agent_id": self.agent_id,
             "hostname": self.hostname,
             "os": self.os,
             "version": self.version,
         }
-        resp = requests.post(url, json=payload, timeout=10)
-        resp.raise_for_status()
+        resp = self._request("POST", "/enroll", payload=payload, timeout=10)
         data = resp.json()
         self.token = data["token"]
         self.save_config()
         print(f"Enrolled as {self.agent_id}")
 
     def heartbeat(self):
-        url = f"{self.server_url}/heartbeat"
         headers = {"X-Agent-Token": self.token}
-        resp = requests.post(url, json={}, headers=headers, timeout=20)
-        resp.raise_for_status()
+        resp = self._request("POST", "/heartbeat", headers=headers, payload={}, timeout=20)
         return resp.json()
 
     def submit_result(self, task_id: int, status: str, output: Dict[str, Any]):
-        url = f"{self.server_url}/results"
         headers = {"X-Agent-Token": self.token}
         payload = {"task_id": task_id, "status": status, "output": output}
-        resp = requests.post(url, json=payload, headers=headers, timeout=20)
-        resp.raise_for_status()
+        resp = self._request("POST", "/results", headers=headers, payload=payload, timeout=20)
         return resp.json()
 
     def run_task(self, task: Dict[str, Any]):

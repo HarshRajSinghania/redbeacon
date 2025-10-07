@@ -4,5 +4,7 @@
   "hostname": "Harsh",
   "os": "Windows 10",
   "version": "0.1.0",
-  "token": "4568045a21bd3894f52fc1ba3bd83d04"
+  "token": "4a48011fe1ac612d4c32ecd21a42c909",
+  "ca_cert_path": "",
+  "pin_sha256": ""
 }
