@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RedBeacon C2 - Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="vignette"></div>
+  <header class="header">
+    <div class="brand">RedBeacon<span>C2</span></div>
+    <nav class="nav">
+      <button id="refreshBtn" class="btn btn-primary">Refresh</button>
+      <input id="adminToken" type="password" placeholder="X-Admin-Token" />
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h2>Agents</h2>
+      <div id="agents" class="grid"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Tasks</h2>
+      <div id="tasks" class="grid"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Recent Results</h2>
+      <div id="results" class="list"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>© RedBeacon C2</div>
+    <div class="pulse"></div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

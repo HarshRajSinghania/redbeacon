@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import secrets
@@ -96,6 +98,31 @@ def get_tasks(agent_id: str | None = None, status: str | None = None, db: Sessio
         )
         for t in tasks
     ]
+
+
+@app.get("/results", response_model=List[schemas.ResultOut], dependencies=[Depends(require_admin)])
+def get_results(agent_id: str | None = None, task_id: int | None = None, limit: int = 100, db: Session = Depends(get_db)):
+    results = crud.list_results(db, agent_id=agent_id, task_id=task_id, limit=limit)
+    return [
+        schemas.ResultOut(
+            id=r.id,
+            task_id=r.task_id,
+            agent_id=r.agent_id,
+            status=r.status,
+            created_at=r.created_at,
+            output_json=r.output_json,
+        )
+        for r in results
+    ]
+
+
+# -------- Static UI --------
+app.mount("/static", StaticFiles(directory="server/static"), name="static")
+
+
+@app.get("/ui")
+def ui_root():
+    return FileResponse("server/static/index.html")
 
 
 if __name__ == "__main__":

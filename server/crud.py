@@ -92,3 +92,19 @@ def audit(db: Session, *, actor: str, action: str, resource: str) -> models.Audi
     db.commit()
     db.refresh(entry)
     return entry
+
+
+def list_results(
+    db: Session,
+    *,
+    agent_id: Optional[str] = None,
+    task_id: Optional[int] = None,
+    limit: int = 100,
+) -> List[models.Result]:
+    stmt = select(models.Result)
+    if agent_id:
+        stmt = stmt.where(models.Result.agent_id == agent_id)
+    if task_id:
+        stmt = stmt.where(models.Result.task_id == task_id)
+    stmt = stmt.order_by(models.Result.created_at.desc()).limit(limit)
+    return list(db.execute(stmt).scalars().all())
