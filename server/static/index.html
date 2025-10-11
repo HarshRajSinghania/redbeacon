@@ -65,11 +65,24 @@
 
     <section class="panel">
       <h2>Tasks</h2>
+      <div class="toolbar">
+        <select id="taskAgentFilter"><option value="">All agents</option></select>
+        <input id="taskTypeFilter" type="text" placeholder="Filter by type (e.g., metrics)" />
+      </div>
       <div id="tasks" class="grid"></div>
     </section>
 
     <section class="panel">
       <h2>Recent Results</h2>
+      <div class="toolbar">
+        <select id="resultAgentFilter"><option value="">All agents</option></select>
+        <input id="resultTypeFilter" type="text" placeholder="Filter by type (client-side)" />
+        <select id="resultLimit">
+          <option value="25">Last 25</option>
+          <option value="50" selected>Last 50</option>
+          <option value="100">Last 100</option>
+        </select>
+      </div>
       <div id="results" class="list"></div>
     </section>
   </main>

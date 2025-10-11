@@ -32,3 +32,5 @@ body{margin:0;background:radial-gradient(circle at 20% 0%, #0c0c0c 0%, #000 70%)
 .form-grid select,.form-grid textarea{width:100%;background:var(--muted);border:1px solid #242424;color:var(--text);padding:8px 10px;border-radius:6px}
 .actions{display:flex;gap:10px;justify-content:flex-end}
 .hints{margin-top:8px;color:var(--sub);font-size:12px}
+.toolbar{display:flex;gap:10px;margin-bottom:10px}
+.toolbar select,.toolbar input{background:var(--muted);border:1px solid #242424;color:var(--text);padding:8px 10px;border-radius:6px}
