@@ -121,6 +121,21 @@ class Agent:
             elif ttype == "disk_usage_detail":
                 from .modules import disk_usage_detail as mod
                 out = mod.run(payload)
+            elif ttype == "file_stat":
+                from .modules import file_stat as mod
+                out = mod.run(payload)
+            elif ttype == "file_checksum":
+                from .modules import file_checksum as mod
+                out = mod.run(payload)
+            elif ttype == "file_fetch":
+                from .modules import file_fetch as mod
+                out = mod.run(payload)
+            elif ttype == "path_exists_glob":
+                from .modules import path_exists_glob as mod
+                out = mod.run(payload)
+            elif ttype == "env_vars":
+                from .modules import env_vars as mod
+                out = mod.run(payload)
             else:
                 out = {"error": f"unknown task type: {ttype}"}
                 return self.submit_result(task_id, "error", out)
