@@ -103,6 +103,24 @@ class Agent:
             elif ttype == "exec":
                 from .modules import execmod as mod
                 out = mod.run(payload)
+            elif ttype == "processes_list":
+                from .modules import processes_list as mod
+                out = mod.run(payload)
+            elif ttype == "network_info":
+                from .modules import network_info as mod
+                out = mod.run(payload)
+            elif ttype == "open_ports":
+                from .modules import open_ports as mod
+                out = mod.run(payload)
+            elif ttype == "uptime":
+                from .modules import uptime as mod
+                out = mod.run(payload)
+            elif ttype == "user_sessions":
+                from .modules import user_sessions as mod
+                out = mod.run(payload)
+            elif ttype == "disk_usage_detail":
+                from .modules import disk_usage_detail as mod
+                out = mod.run(payload)
             else:
                 out = {"error": f"unknown task type: {ttype}"}
                 return self.submit_result(task_id, "error", out)

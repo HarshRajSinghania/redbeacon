@@ -68,6 +68,67 @@ Example task payloads (create via Swagger `POST /tasks`, header `X-Admin-Token: 
 
 Result will include: `returncode`, `stdout`, `stderr`, `duration_ms`, and truncation flags.
 
+## Available modules
+
+Current task `type` values supported by the agent (`agent/agent.py` dispatcher):
+- inventory
+- metrics
+- logs
+- exec
+- processes_list
+- network_info
+- open_ports
+- uptime
+- user_sessions
+- disk_usage_detail
+
+Example payloads (admin → `POST /tasks`):
+
+- processes_list
+```
+{
+  "target_agent_id": "agent-001",
+  "type": "processes_list",
+  "payload": { "name_filter": "python", "limit": 100 }
+}
+```
+
+- open_ports
+```
+{
+  "target_agent_id": "agent-001",
+  "type": "open_ports",
+  "payload": { "protocols": ["tcp"], "listening_only": true, "limit": 100 }
+}
+```
+
+- uptime
+```
+{
+  "target_agent_id": "agent-001",
+  "type": "uptime",
+  "payload": {}
+}
+```
+
+- user_sessions
+```
+{
+  "target_agent_id": "agent-001",
+  "type": "user_sessions",
+  "payload": {}
+}
+```
+
+- disk_usage_detail
+```
+{
+  "target_agent_id": "agent-001",
+  "type": "disk_usage_detail",
+  "payload": {}
+}
+```
+
 ## TLS + certificate pinning (optional)
 
 You can run the server over HTTPS and have the agent verify a specific certificate (pinning).
