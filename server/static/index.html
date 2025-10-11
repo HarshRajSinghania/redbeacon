@@ -18,6 +18,47 @@
 
   <main class="container">
     <section class="panel">
+      <h2>Create Task</h2>
+      <div class="form-grid">
+        <div>
+          <label>Agent</label>
+          <select id="agentSelect"></select>
+        </div>
+        <div>
+          <label>Type</label>
+          <select id="typeSelect">
+            <option value="inventory">inventory</option>
+            <option value="metrics">metrics</option>
+            <option value="logs">logs</option>
+            <option value="exec">exec</option>
+            <option value="processes_list">processes_list</option>
+            <option value="network_info">network_info</option>
+            <option value="open_ports">open_ports</option>
+            <option value="uptime">uptime</option>
+            <option value="user_sessions">user_sessions</option>
+            <option value="disk_usage_detail">disk_usage_detail</option>
+            <option value="file_stat">file_stat</option>
+            <option value="file_checksum">file_checksum</option>
+            <option value="file_fetch">file_fetch</option>
+            <option value="path_exists_glob">path_exists_glob</option>
+            <option value="env_vars">env_vars</option>
+          </select>
+        </div>
+        <div class="full">
+          <label>Payload (JSON)</label>
+          <textarea id="payloadInput" rows="6" class="code" placeholder="{ }"></textarea>
+        </div>
+        <div class="actions full">
+          <button id="presetBtn" class="btn">Insert preset</button>
+          <button id="createTaskBtn" class="btn btn-primary">Create Task</button>
+        </div>
+      </div>
+      <div class="hints">
+        <div class="badge">Tip</div>
+        Use the preset to auto-fill a safe example, then tweak the payload.
+      </div>
+    </section>
+    <section class="panel">
       <h2>Agents</h2>
       <div id="agents" class="grid"></div>
     </section>
